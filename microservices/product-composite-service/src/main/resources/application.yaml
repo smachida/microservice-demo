@@ -16,6 +16,46 @@ logging:
     root: INFO
     jp.vmware.sol: DEBUG
 
+api:
+  common:
+    version: 1.0.0
+    title: Sample API
+    description: Description of the API
+    termsOfServiceUrl: MINE TERMS OF SERVICE URL
+    license: License
+    licenseUrl: MY LICENSE URL
+    contact:
+      name: Contact
+      url: My URL
+      email: vmware@acme.local
+  product-composite:
+    get-composite-product:
+      description: 指定した製品id の複合ビューを返す
+      notes: |
+        # 通常のレスポンス
+        もし指定した製品idが見つかった場合、以下の情報を返す:
+        1. 製品の基本情報
+        1. レビュー
+        1. お薦め
+        1. サービスアドレス
+
+        # 以下のケースでは部分的か結果を返す（テスト用）
+
+        ## 製品id 113
+        200 - OK, お薦めは返信されない
+
+        ## 製品id 213
+        200 - OK, レビューは返信されない
+
+        ## 製品id 数字以外
+        400 - Bad Request, エラーが返される
+
+        ## 製品id 13
+        404 - Not Found, エラーが返される
+
+        ## 製品id 負数
+        422 - Unprocessable Entity, エラーが返される
+
 ---
 spring.profiles: docker
 
