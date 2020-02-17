@@ -4,11 +4,32 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 @Api("製品情報のための REST API")
 public interface ProductCompositeService {
+
+    /**
+     * 利用例:
+     * curl -X POST $HOST:$PORT/product-composite \
+     *   -H "Content-Type: application/json" --data \
+     *   '{"productId":123, "name":"product 123", "weight":123}'
+     * @param body
+     */
+    @ApiOperation(
+            value = "${api.product-composite.create-composite-product.description}",
+            notes = "${api.product-composite.create-composite-product.notes}"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad Request, 不正なフォーマット"),
+            @ApiResponse(code = 422, message = "Unprocessable entity, 指定したパラメータで処理を継続できません")
+    })
+    @PostMapping(
+            value = "/product-composite",
+            consumes = "application/json"
+    )
+    void createCompositeProduct(@RequestBody ProductAggregate body);
+
     /**
      * 利用例: curl $HOST:$PORT/product-composite/1
      * @param productId
@@ -27,5 +48,24 @@ public interface ProductCompositeService {
             value = "/product-composite/{productId}",
             produces = "application/json"
     )
-    ProductAggregate getProduct(@PathVariable int productId);
+    ProductAggregate getCompositeProduct(@PathVariable int productId);
+
+    /**
+     * 利用例:
+     * curl -X DELETE $HOST:$PORT/product-composite/1
+
+     * @param productId
+     */
+    @ApiOperation(
+            value = "${api.product-composite.delete-composite-product.description}",
+            notes = "${api.product-composite.delete-composite-product.notes}"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad Request, 不正なフォーマット"),
+            @ApiResponse(code = 422, message = "Unprocessable entity, 指定したパラメータで処理を継続できません")
+    })
+    @DeleteMapping(
+            value = "/product-composite/{productId}"
+    )
+    void deleteCompositeProduct(@PathVariable int productId);
 }

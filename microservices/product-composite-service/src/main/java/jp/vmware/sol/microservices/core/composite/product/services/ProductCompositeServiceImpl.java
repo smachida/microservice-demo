@@ -26,25 +26,78 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
         this.integration = integration;
     }
 
+    @Override
+    public void createCompositeProduct(ProductAggregate body) {
+        try {
+            // トランザクション処理なし(部分更新の可能性あり)
+            LOG.debug("createCompositeProduct: create a new composite entity for productId: {}", body.getProductId());
+            Product newProduct = new Product(body.getProductId(), body.getName(), body.getWeight(), null);
+            integration.createProduct(newProduct);
+
+            if (body.getRecommendations() != null) {
+                body.getRecommendations().forEach(recommendation -> {
+                    Recommendation newRecommendation =
+                            new Recommendation(
+                                    body.getProductId(),
+                                    recommendation.getRecommendationId(),
+                                    recommendation.getAuthor(),
+                                    recommendation.getRate(),
+                                    recommendation.getContent(),
+                                    null);
+                    integration.createRecommendation(newRecommendation);
+                });
+            }
+
+            if (body.getReviews() != null) {
+                body.getReviews().forEach(review -> {
+                    Review newReview =
+                            new Review(
+                                    body.getProductId(),
+                                    review.getReviewId(),
+                                    review.getAuthor(),
+                                    review.getSubject(),
+                                    review.getContent(),
+                                    null);
+                    integration.createReview(newReview);
+                });
+            }
+
+            LOG.debug("createCompositeProduct: composite entities created for productId: {}", body.getProductId());
+
+        } catch (RuntimeException ex) {
+            LOG.warn("createCompositeProduct failed", ex);
+            throw ex;
+        }
+    }
 
     @Override
-    public ProductAggregate getProduct(int productId) {
+    public ProductAggregate getCompositeProduct(int productId) {
+        LOG.debug("getComositeProduct: lookup a product aggregate for productId: {}", productId);
         Product product = integration.getProduct(productId);
         LOG.debug("Got the Product for the productId: {} -> {{", productId, product);
 
         if (product == null)
             throw new NotFoundException("No product found for productId: " + productId);
 
-        List<Recommendation> recommendations =
-                integration.getRecommendations(productId);
-        List<Review> reviews =
-                integration.getReviews(productId);
+        List<Recommendation> recommendations = integration.getRecommendations(productId);
+        List<Review> reviews = integration.getReviews(productId);
+        LOG.debug("getCompositeProduct: aggreate entity found for productId: {}", productId);
 
         return createProductAggregate(
                 product,
                 recommendations,
                 reviews,
                 serviceUtil.getServiceAddress());
+    }
+
+    @Override
+    public void deleteCompositeProduct(int productId) {
+        // トランザクション処理なし(部分更新の可能性あり)
+        LOG.debug("deleteCompositeProduct: Deletes a product aggregate for productId: {}", productId);
+        integration.deleteProduct(productId);
+        integration.deleteRecommendations(productId);
+        integration.deleteReviews(productId);
+        LOG.debug("deleteCompositeProduct: aggregate entities deleted for productId: {}", productId);
     }
 
     private ProductAggregate createProductAggregate(
@@ -61,13 +114,13 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
         // 2. Copy summary recommendation info, if available
         List<RecommendationSummary> recommendationSummaries = (recommendations == null) ? null :
                 recommendations.stream()
-                        .map(r -> new RecommendationSummary(r.getRecommendationId(), r.getAuthor(), r.getRate()))
+                        .map(r -> new RecommendationSummary(r.getRecommendationId(), r.getAuthor(), r.getRate(), r.getContent()))
                         .collect(Collectors.toList());
 
         // 3. Copy summary review info, if available
         List<ReviewSummary> reviewSummaries = (reviews == null)  ? null :
                 reviews.stream()
-                        .map(r -> new ReviewSummary(r.getReviewId(), r.getAuthor(), r.getSubject()))
+                        .map(r -> new ReviewSummary(r.getReviewId(), r.getAuthor(), r.getSubject(), r.getContent()))
                         .collect(Collectors.toList());
 
         // 4. Create info regarding the involved microservices addresses
