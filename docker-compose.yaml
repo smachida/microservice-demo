@@ -6,18 +6,25 @@ services:
     mem_limit: 350m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mongodb_product
 
   recommendation:
     build: microservices/recommendation-service
     mem_limit: 350m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mongodb_recommendation
 
   review:
     build: microservices/review-service
     mem_limit: 350m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      mysql:
+        condition: service_healthy
 
   product-composite:
     build: microservices/product-composite-service
@@ -26,3 +33,42 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+
+  workstation:
+    image: openjdk:latest
+    mem_limit: 350m
+    tty: true
+
+  # $ mongo
+  mongodb_product:
+    image: mongo:3.6.9
+    mem_limit: 350m
+    ports:
+      - "27017:27017"
+    command: mongod --smallfiles
+
+  # $ mongo
+  mongodb_recommendation:
+    image: mongo:3.6.9
+    mem_limit: 350m
+    ports:
+      - "27018:27017"
+    command: mongod --smallfiles
+
+  # $ mysql -uroot -h127.0.0.1 -p
+  mysql:
+    image: mysql:5.7
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+    mem_limit: 350m
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=review-db
+      - MYSQL_USER=vmware
+      - MYSQL_PASSWORD=password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-uvmware", "-ppassword", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
