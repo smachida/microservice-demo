@@ -18,6 +18,10 @@ configurations {
     }
 }
 
+ext {
+    springCloudVersion = "Hoxton.SR1"
+}
+
 repositories {
     mavenCentral()
     maven {url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'}
@@ -26,11 +30,14 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit'
+    implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
+
     implementation 'io.springfox:springfox-swagger2:3.0.0-SNAPSHOT'
     implementation 'io.springfox:springfox-swagger-ui:3.0.0-SNAPSHOT'
     implementation 'io.springfox:springfox-spring-webflux:3.0.0-SNAPSHOT'
@@ -38,6 +45,14 @@ dependencies {
     implementation project(':util')
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
 test {
     useJUnitPlatform()
 }
+
+

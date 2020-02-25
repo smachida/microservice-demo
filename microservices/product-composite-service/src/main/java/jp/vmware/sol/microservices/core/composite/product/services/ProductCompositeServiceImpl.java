@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,23 +72,19 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
     }
 
     @Override
-    public ProductAggregate getCompositeProduct(int productId) {
-        LOG.debug("getComositeProduct: lookup a product aggregate for productId: {}", productId);
-        Product product = integration.getProduct(productId);
-        LOG.debug("Got the Product for the productId: {} -> {{", productId, product);
-
-        if (product == null)
-            throw new NotFoundException("No product found for productId: " + productId);
-
-        List<Recommendation> recommendations = integration.getRecommendations(productId);
-        List<Review> reviews = integration.getReviews(productId);
-        LOG.debug("getCompositeProduct: aggreate entity found for productId: {}", productId);
-
-        return createProductAggregate(
-                product,
-                recommendations,
-                reviews,
-                serviceUtil.getServiceAddress());
+    public Mono<ProductAggregate> getCompositeProduct(int productId) {
+        // Product, Recommendation, 及び Review サービス呼び出しの並行実行
+        return Mono.zip(
+                // lambda
+                values -> createProductAggregate(
+                        (Product) values[0],
+                        (List<Recommendation>)values[1],
+                        (List<Review>)values[2],
+                        serviceUtil.getServiceAddress()),
+                integration.getProduct(productId),
+                integration.getRecommendations(productId).collectList(),
+                integration.getReviews(productId).collectList()
+        ).doOnError(ex -> LOG.warn("getCompositeProduct failed: {}", ex.toString())).log();
     }
 
     @Override
