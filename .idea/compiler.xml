@@ -11,5 +11,11 @@
         <module name="microservice-demo.microservices.review-service.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="eureka-server.main" target="1.8" />
+      <module name="eureka-server.test" target="1.8" />
+      <module name="eurekaserver.main" target="1.8" />
+      <module name="eurekaserver.test" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
