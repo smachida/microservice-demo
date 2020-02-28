@@ -22,11 +22,12 @@ import static jp.vmware.sol.api.event.Event.Type.CREATE;
 import static jp.vmware.sol.api.event.Event.Type.DELETE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {"spring.datasource.url=jdbc:h2:mem:review-db"})
+@SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"eureka.client.enabled=false", "spring.datasource.url=jdbc:h2:mem:review-db"})
 public class ReviewServiceApplicationTests {
 
     @Autowired
