@@ -20,7 +20,6 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.util.Collections;
 import java.util.concurrent.BlockingQueue;
 
 import static java.util.Collections.singletonList;
@@ -36,7 +35,9 @@ import static org.springframework.http.HttpStatus.OK;
 import static reactor.core.publisher.Mono.just;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"eureka.client.enabled=false"})
+@SpringBootTest(webEnvironment = RANDOM_PORT,
+        classes = { ProductCompositeServiceApplication.class, TestSecurityConfig.class },
+        properties = {"spring.main.allow-bean-definition-overriding=true", "eureka.client.enabled=false"})
 public class MessagingTests {
     private static final int PRODUCT_ID_OK = 1;
     private static final int PRODUCT_ID_NOT_FOUND = 2;

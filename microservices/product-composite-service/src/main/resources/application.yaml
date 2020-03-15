@@ -2,10 +2,16 @@ server.port: 7000
 
 spring.application.name: product-composite
 
+app:
+  eureka-username: u
+  eureka-password: p
+  eureka-server: localhost
+  auth-server: localhost
+
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: "http://${app.eureka-username}:${app.eureka-password}@${app.eureka-server}:8761/eureka/"
     initialInstanceInfoReplicationIntervalSeconds: 5
     registryFetchIntervalSeconds: 5
   instance:
@@ -43,10 +49,13 @@ spring.rabbitmq:
   username: guest
   password: guest
 
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
+
 logging:
   level:
     root: INFO
     jp.vmware.sol: DEBUG
+    org.springframework.web.server.adapter.HttpWebHandlerAdapter: TRACE
 
 api:
   common:
@@ -108,8 +117,10 @@ spring.profiles: docker
 
 server.port: 8080
 
-eureka.client.serviceUrl.defaultZone: http://eureka:8761/eureka
-
 spring.rabbitmq.host: rabbitmq
 
 spring.cloud.stream.kafka.binder.brokers: kafka
+
+app:
+  eureka-server: eureka
+  auth-server: auth-server
