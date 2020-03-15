@@ -30,15 +30,15 @@ import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
 @ComponentScan("jp.vmware.sol")
 public class ProductCompositeServiceApplication {
 
-    @Value("${api.common.version}")           String apiVersion;
-    @Value("${api.common.title}")             String apiTitle;
-    @Value("${api.common.description}")       String apiDescription;
-    @Value("${api.common.termsOfServiceUrl}") String apiTermsOfServiceUrl;
-    @Value("${api.common.license}")           String apiLicense;
-    @Value("${api.common.licenseUrl}")        String apiLicenseUrl;
-    @Value("${api.common.contact.name}")      String apiContactName;
-    @Value("${api.common.contact.url}")       String apiContactUrl;
-    @Value("${api.common.contact.email}")     String apiContactEmail;
+    @Value("${api.common.version:}")           String apiVersion;
+    @Value("${api.common.title:}")             String apiTitle;
+    @Value("${api.common.description:}")       String apiDescription;
+    @Value("${api.common.termsOfServiceUrl:}") String apiTermsOfServiceUrl;
+    @Value("${api.common.license:}")           String apiLicense;
+    @Value("${api.common.licenseUrl:}")        String apiLicenseUrl;
+    @Value("${api.common.contact.name:}")      String apiContactName;
+    @Value("${api.common.contact.url:}")       String apiContactUrl;
+    @Value("${api.common.contact.email:}")     String apiContactEmail;
 
 
     @Bean
