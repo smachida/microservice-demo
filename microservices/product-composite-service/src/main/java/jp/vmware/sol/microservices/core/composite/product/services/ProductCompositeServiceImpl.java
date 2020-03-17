@@ -1,5 +1,6 @@
 package jp.vmware.sol.microservices.core.composite.product.services;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.reactor.retry.RetryExceptionWrapper;
 import jp.vmware.sol.api.composite.product.*;
 import jp.vmware.sol.api.core.product.Product;
@@ -10,7 +11,6 @@ import jp.vmware.sol.util.http.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.integration.handler.advice.RequestHandlerCircuitBreakerAdvice;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -102,7 +102,7 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
                 ReactiveSecurityContextHolder.getContext().defaultIfEmpty(nullSC),
                 integration.getProduct(productId, delay, faultPercent)
                 .onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
-                .onErrorReturn(RequestHandlerCircuitBreakerAdvice.CircuitBreakerOpenException.class, getProductFallbackValue(productId)),
+                .onErrorReturn(CallNotPermittedException.class, getProductFallbackValue(productId)),
                 integration.getRecommendations(productId).collectList(),
                 integration.getReviews(productId).collectList()
         ).doOnError(ex -> LOG.warn("getCompositeProduct failed: {}", ex.toString())).log();
@@ -136,7 +136,7 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
 
         LOG.warn("Creating a fallback product for productId = {}", productId);
 
-        if (productId == 13) {
+        if (productId == 14) {
             String msg = "Product Id: " + productId + " not found in fallback cache!";
             LOG.warn(msg);
             throw new NotFoundException(msg);
