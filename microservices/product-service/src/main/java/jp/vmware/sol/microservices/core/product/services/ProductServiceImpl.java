@@ -14,6 +14,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import java.util.Random;
+
 import static reactor.core.publisher.Mono.error;
 
 @RestController
@@ -51,10 +53,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Mono<Product> getProduct(int productId) {
+    public Mono<Product> getProduct(int productId, int delay, int faultPercent) {
         LOG.debug("/product return the found product for productId={}", productId);
-        if (productId < 1)
+        if (productId < 1) {
             throw new InvalidInputException("Invalid productId: " + productId);
+        }
+
+        if (delay > 0) {
+            simulateDelay(delay);
+        }
+
+        if (faultPercent > 0) {
+            throwErrorIfBadLuck(faultPercent);
+        }
 
         // Project Reactor: fluent API
         return repository.findByProductId(productId)
@@ -76,4 +87,35 @@ public class ProductServiceImpl implements ProductService {
                 .map(e -> repository.delete(e))
                 .flatMap(e -> e).block();
     }
+
+    private void simulateDelay(int delay) {
+        LOG.debug("Sleeping for {} seconds...", delay);
+
+        try {
+            Thread.sleep(delay * 1000);
+        } catch (InterruptedException e) {}
+
+        LOG.debug("Woke up.");
+    }
+
+    private void throwErrorIfBadLuck(int faultPercent) {
+        int randomThreshold = getRandomNumber(1, 100);
+        if (faultPercent < randomThreshold) {
+            LOG.debug("[Simulation] No error occurred, {} < {}", faultPercent, randomThreshold);
+        } else {
+            LOG.debug("[Simulation] An error occurred, {} >= {}", faultPercent, randomThreshold);
+            throw new RuntimeException("[Simulation] Something went wrong...");
+        }
+    }
+
+    private final Random randomNumberGenerator = new Random();
+    private int getRandomNumber(int min, int max) {
+
+        if (max < min) {
+            throw new RuntimeException("invalid values: min=" + min + ", max=" + max);
+        }
+
+        return randomNumberGenerator.nextInt((max - min) + 1) + min;
+    }
+
 }

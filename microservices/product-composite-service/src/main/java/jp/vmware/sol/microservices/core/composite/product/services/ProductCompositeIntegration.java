@@ -1,6 +1,8 @@
 package jp.vmware.sol.microservices.core.composite.product.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import jp.vmware.sol.api.core.product.Product;
 import jp.vmware.sol.api.core.product.ProductService;
 import jp.vmware.sol.api.core.recommendation.Recommendation;
@@ -14,6 +16,7 @@ import jp.vmware.sol.util.http.HttpErrorInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
@@ -22,10 +25,13 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.net.URI;
+import java.time.Duration;
 
 import static jp.vmware.sol.api.event.Event.Type.CREATE;
 import static jp.vmware.sol.api.event.Event.Type.DELETE;
@@ -48,6 +54,8 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
     // 非同期メッセージング
     private MessageSources messageSources;
 
+    private final int productServiceTimeoutSec;
+
     public interface MessageSources {
         String OUTPUT_PRODUCTS = "output-products";
         String OUTPUT_RECOMMENDATIONS = "output-recommendations";
@@ -67,11 +75,13 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
     public ProductCompositeIntegration(
         WebClient.Builder webClientBuilder,
         ObjectMapper mapper,
-        MessageSources messageSources) {
+        MessageSources messageSources,
+        @Value("${app.product-service.timeoutSec:0}") int productServiceTimeoutSec) {
 
         this.webClientBuilder = webClientBuilder;
         this.mapper = mapper;
         this.messageSources = messageSources;
+        this.productServiceTimeoutSec = productServiceTimeoutSec;
     }
 
 
@@ -83,9 +93,13 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
         return product;
     }
 
+    @Retry(name = "product")
+    @CircuitBreaker(name = "product")
     @Override
-    public Mono<Product> getProduct(int productId) {
-        String url = productServiceUrl + "/product/" + productId;
+    public Mono<Product> getProduct(int productId, int delay, int faultPercent) {
+        URI url = UriComponentsBuilder.fromUriString(productServiceUrl +
+                "/product/{productId}?delay={delay}&faultPercent={faultPercent}")
+                .build(productId, delay, faultPercent);
         LOG.debug("Will call the getProduct API on URL: {}", url);
 
         return getWebClient()
@@ -94,7 +108,8 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
                 .retrieve()
                 .bodyToMono(Product.class)
                 .log()
-                .onErrorMap(WebClientResponseException.class, ex -> handleException(ex));
+                .onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+                .timeout(Duration.ofSeconds(productServiceTimeoutSec));
     }
 
     @Override

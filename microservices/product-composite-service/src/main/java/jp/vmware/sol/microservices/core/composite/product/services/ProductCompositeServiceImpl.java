@@ -1,13 +1,16 @@
 package jp.vmware.sol.microservices.core.composite.product.services;
 
+import io.github.resilience4j.reactor.retry.RetryExceptionWrapper;
 import jp.vmware.sol.api.composite.product.*;
 import jp.vmware.sol.api.core.product.Product;
 import jp.vmware.sol.api.core.recommendation.Recommendation;
 import jp.vmware.sol.api.core.review.Review;
+import jp.vmware.sol.util.exceptions.NotFoundException;
 import jp.vmware.sol.util.http.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.handler.advice.RequestHandlerCircuitBreakerAdvice;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -86,7 +89,7 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
     }
 
     @Override
-    public Mono<ProductAggregate> getCompositeProduct(int productId) {
+    public Mono<ProductAggregate> getCompositeProduct(int productId, int delay, int faultPercent) {
         // Product, Recommendation, 及び Review サービス呼び出しの並行実行
         return Mono.zip(
                 // lambda
@@ -97,7 +100,9 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
                         (List<Review>)values[3],
                         serviceUtil.getServiceAddress()),
                 ReactiveSecurityContextHolder.getContext().defaultIfEmpty(nullSC),
-                integration.getProduct(productId),
+                integration.getProduct(productId, delay, faultPercent)
+                .onErrorMap(RetryExceptionWrapper.class, retryException -> retryException.getCause())
+                .onErrorReturn(RequestHandlerCircuitBreakerAdvice.CircuitBreakerOpenException.class, getProductFallbackValue(productId)),
                 integration.getRecommendations(productId).collectList(),
                 integration.getReviews(productId).collectList()
         ).doOnError(ex -> LOG.warn("getCompositeProduct failed: {}", ex.toString())).log();
@@ -125,6 +130,21 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
             throw e;
         }
     }
+
+
+    private Product getProductFallbackValue(int productId) {
+
+        LOG.warn("Creating a fallback product for productId = {}", productId);
+
+        if (productId == 13) {
+            String msg = "Product Id: " + productId + " not found in fallback cache!";
+            LOG.warn(msg);
+            throw new NotFoundException(msg);
+        }
+
+        return new Product(productId, "Fallback product" + productId, productId, serviceUtil.getServiceAddress());
+    }
+
 
     private ProductAggregate createProductAggregate(
             SecurityContext sc,

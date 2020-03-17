@@ -4,6 +4,8 @@ services:
   product:
     build: microservices/product-service
     mem_limit: 350m
+    networks:
+      - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
@@ -14,6 +16,8 @@ services:
   product-p1:
     build: microservices/product-service
     mem_limit: 350m
+    networks:
+      - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1,kafka
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
@@ -25,6 +29,8 @@ services:
   recommendation:
     build: microservices/recommendation-service
     mem_limit: 350m
+    networks:
+      - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
@@ -35,6 +41,8 @@ services:
   recommendation-p1:
     build: microservices/recommendation-service
     mem_limit: 350m
+    networks:
+      - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1,kafka
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
@@ -46,6 +54,8 @@ services:
   review:
     build: microservices/review-service
     mem_limit: 350m
+    networks:
+      - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
@@ -58,6 +68,8 @@ services:
   review-p1:
     build: microservices/review-service
     mem_limit: 350m
+    networks:
+      - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1,kafka
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
@@ -71,6 +83,8 @@ services:
   product-composite:
     build: microservices/product-composite-service
     mem_limit: 350m
+    networks:
+      - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,kafka
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
@@ -85,6 +99,8 @@ services:
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     build: spring-cloud/eureka-server
     mem_limit: 350m
+    networks:
+      - my-network
 
   gateway:
     environment:
@@ -93,6 +109,8 @@ services:
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     build: spring-cloud/gateway
     mem_limit: 350m
+    networks:
+      - my-network
     ports:
       - "8443:8443"
 
@@ -103,6 +121,8 @@ services:
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     build: spring-cloud/authorization-server
     mem_limit: 350m
+    networks:
+      - my-network
 
   config-server:
     environment:
@@ -114,16 +134,22 @@ services:
       - $PWD/config-repo:/config-repo
     build: spring-cloud/config-server
     mem_limit: 350m
+    networks:
+      - my-network
 
   workstation:
     image: openjdk:latest
     mem_limit: 350m
+    networks:
+      - my-network
     tty: true
 
   # $ mongo
   mongodb_product:
     image: mongo:3.6.9
     mem_limit: 350m
+    networks:
+      - my-network
     ports:
       - "27017:27017"
     command: mongod --smallfiles
@@ -137,6 +163,8 @@ services:
   mongodb_recommendation:
     image: mongo:3.6.9
     mem_limit: 350m
+    networks:
+      - my-network
     ports:
       - "27018:27017"
     command: mongod --smallfiles
@@ -151,6 +179,8 @@ services:
     image: mysql:5.7
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
     mem_limit: 350m
+    networks:
+      - my-network
     ports:
       - "3306:3306"
     environment:
@@ -167,6 +197,8 @@ services:
   kafka:
     image: wurstmeister/kafka:2.12-2.1.0
     mem_limit: 350m
+    networks:
+      - my-network
     ports:
       - "9092:9092"
     environment:
@@ -179,7 +211,13 @@ services:
   zookeeper:
     image: wurstmeister/zookeeper:3.4.6
     mem_limit: 350m
+    networks:
+      - my-network
     ports:
       - "2181:2181"
     environment:
       - KAFKA_ADVERTISED_HOST_NAME=zookeeper
+
+networks:
+  my-network:
+    name: my-network
