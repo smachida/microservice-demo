@@ -15,7 +15,7 @@
 * 09-SpringCloud-Config
 * 10-SpringCloud-CircuitBreaker
 * 10-SpringCloud-CircuitBreaker-U1
-* 11-springCloud-Sleuth-And-Zipkin
+* 11-SpringCloud-Sleuth-And-Zipkin
 * 12-k8s-minikube-test
 
 ## SpringCloud-Security-OAuth2-1
