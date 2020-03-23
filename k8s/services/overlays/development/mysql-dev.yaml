@@ -32,7 +32,7 @@ spec:
             - containerPort: 3306
           resources:
             limits:
-              memory: 350Mi
+              memory: 300Mi
 ---
 apiVersion: v1
 kind: Service

@@ -1,8 +1,8 @@
 bases:
   - ../../base
 resources:
-#  - mongodb_product-dev.yaml
-#  - mongodb_recommendation-dev.yaml
-#  - mysql-dev.yaml
-#  - rabbitmq-dev.yaml
-  - workstation-dev.yaml
+  - mongodb_product-dev.yaml
+  - mongodb_recommendation-dev.yaml
+  - mysql-dev.yaml
+  - rabbitmq-dev.yaml
+#  - workstation-dev.yaml

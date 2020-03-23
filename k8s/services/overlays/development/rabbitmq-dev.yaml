@@ -21,7 +21,7 @@ spec:
             - containerPort: 15672
           resources:
             limits:
-              memory: 350Mi
+              memory: 300Mi
           readinessProbe:
             httpGet:
               scheme: HTTP

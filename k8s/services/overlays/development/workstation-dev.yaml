@@ -19,5 +19,5 @@ spec:
           tty: true
           resources:
             limits:
-              memory: 350Mi
+              memory: 300Mi
 

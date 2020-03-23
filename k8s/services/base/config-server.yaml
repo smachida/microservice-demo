@@ -26,7 +26,7 @@ spec:
             - containerPort: 8888
           resources:
             limits:
-              memory: 350Mi
+              memory: 300Mi
           livenessProbe:
             httpGet:
               scheme: HTTP
@@ -64,3 +64,4 @@ spec:
     app: config-server
   ports:
     - port: 8888
+      targetPort: 8888
