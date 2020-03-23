@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workstation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workstation
+  template:
+    metadata:
+      labels:
+        app: workstation
+    spec:
+      containers:
+        - name: workstation
+          image: openjdk:latest
+          imagePullPolicy: IfNotPresent
+          tty: true
+          resources:
+            limits:
+              memory: 350Mi
+
