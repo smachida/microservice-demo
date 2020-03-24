@@ -20,7 +20,7 @@ spec:
             - secretRef:
                 name: mongodb-server-credentials
           ports:
-            - containerPort: 27017
+            - containerPort: 27018
           resources:
             limits:
               memory: 300Mi

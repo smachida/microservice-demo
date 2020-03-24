@@ -19,5 +19,6 @@
 * 12-k8s-minikube-Test
 * 13-1-k8s-In-Development-Env
 * 13-2-k8s-In-Production-Env
+* 14-1-k8s-Using-k8s-Features-In-Development-Env
 
 ## SpringCloud-Security-OAuth2-1

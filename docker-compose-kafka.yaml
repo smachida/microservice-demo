@@ -3,63 +3,95 @@ version: '2.1'
 services:
   product:
     build: microservices/product-service
+    image: microservice-demo/product-service
     mem_limit: 350m
     networks:
       - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
-      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
-      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yaml,file:/config-repo/product.yaml
+      - SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE=admin
+      - SPRING_DATA_MONGODB_USERNAME=${MONGODB_USR}
+      - SPRING_DATA_MONGODB_PASSWORD=${MONGODB_PWD}
+    volumes:
+      - $PWD/config-repo:/config-repo
     depends_on:
       - kafka
-      - mongodb_product
+      - mongodb-product
   product-p1:
     build: microservices/product-service
+    image: microservice-demo/product-service
     mem_limit: 350m
     networks:
       - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1,kafka
-      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
-      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yaml,file:/config-repo/product.yaml
+        - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USR}
+        - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PWD}
+        - SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE=admin
+        - SPRING_DATA_MONGODB_USERNAME=${MONGODB_USR}
+        - SPRING_DATA_MONGODB_PASSWORD=${MONGODB_PWD}
+    volumes:
+      - $PWD/config-repo:/config-repo
     depends_on:
       - kafka
-      - mongodb_product
+      - mongodb-product
 
   recommendation:
     build: microservices/recommendation-service
+    image: microservice-demo/recommendation-service
     mem_limit: 350m
     networks:
       - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
-      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
-      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yaml,file:/config-repo/recommendation.yaml
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USR}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PWD}
+      - SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE=admin
+      - SPRING_DATA_MONGODB_USERNAME=${MONGODB_USR}
+      - SPRING_DATA_MONGODB_PASSWORD=${MONGODB_PWD}
+    volumes:
+      - $PWD/config-repo:/config-repo
     depends_on:
       - kafka
-      - mongodb_recommendation
+      - mongodb-recommendation
   recommendation-p1:
     build: microservices/recommendation-service
+    image: microservice-demo/recommendation-service
     mem_limit: 350m
     networks:
       - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1,kafka
-      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
-      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yaml,file:/config-repo/recommendation.yaml
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USR}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PWD}
+      - SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE=admin
+      - SPRING_DATA_MONGODB_USERNAME=${MONGODB_USR}
+      - SPRING_DATA_MONGODB_PASSWORD=${MONGODB_PWD}
+    volumes:
+      - $PWD/config-repo:/config-repo
     depends_on:
       - kafka
-      - mongodb_recommendation
+      - mongodb-recommendation
 
   review:
     build: microservices/review-service
+    image: microservice-demo/review-service
     mem_limit: 350m
     networks:
       - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
-      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
-      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yaml,file:/config-repo/review.yaml
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USR}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PWD}
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USR}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PWD}
+    volumes:
+      - $PWD/config-repo:/config-repo
     depends_on:
       mysql:
         condition: service_healthy
@@ -67,13 +99,19 @@ services:
         condition: service_started
   review-p1:
     build: microservices/review-service
+    image: microservice-demo/review-service
     mem_limit: 350m
     networks:
       - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1,kafka
-      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
-      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yaml,file:/config-repo/review.yaml
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USR}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PWD}
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USR}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PWD}
+    volumes:
+      - $PWD/config-repo:/config-repo
     depends_on:
       mysql:
         condition: service_healthy
@@ -82,22 +120,31 @@ services:
 
   product-composite:
     build: microservices/product-composite-service
+    image: microservice-demo/product-composite-service
     mem_limit: 350m
     networks:
       - my-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,kafka
-      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
-      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yaml,file:/config-repo/product-composite.yaml
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USR}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PWD}
+    volumes:
+      - $PWD/config-repo:/config-repo
     depends_on:
       - kafka
 
   gateway:
+    build: spring-cloud/gateway
+    image: microservice-demo/gateway
     environment:
       - SPRING_PROFILES_ACTIVE=docker,kafka
-      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
-      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
-    build: spring-cloud/gateway
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yaml,file:/config-repo/gateway.yaml
+        - SERVER_SSL_KEY_STORE_PASSWORD=${GATEWAY_TLS_PWD}
+        - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USR}
+        - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PWD}
+    volumes:
+      - $PWD/config-repo:/config-repo
     mem_limit: 350m
     networks:
       - my-network
@@ -105,11 +152,15 @@ services:
       - "8443:8443"
 
   auth-server:
+    build: spring-cloud/authorization-server
+    image: microservice-demo/auth-server
     environment:
       - SPRING_PROFILES_ACTIVE=docker,kafka
-      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
-      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
-    build: spring-cloud/authorization-server
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yaml,file:/config-repo/auth-server.yaml
+        - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USR}
+        - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PWD}
+    volumes:
+      - $PWD/config-repo:/config-repo
     mem_limit: 350m
     networks:
       - my-network
@@ -122,7 +173,7 @@ services:
     tty: true
 
   # $ mongo
-  mongodb_product:
+  mongodb-product:
     image: mongo:3.6.9
     mem_limit: 350m
     networks:
@@ -130,6 +181,9 @@ services:
     ports:
       - "27017:27017"
     command: mongod --smallfiles
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USR}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PWD}
     healthcheck:
       test: "mongo --eval 'db.stats().ok'"
       interval: 10s
@@ -137,7 +191,7 @@ services:
       retries: 10
 
   # $ mongo
-  mongodb_recommendation:
+  mongodb-recommendation:
     image: mongo:3.6.9
     mem_limit: 350m
     networks:
@@ -145,6 +199,9 @@ services:
     ports:
       - "27018:27017"
     command: mongod --smallfiles
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USR}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PWD}
     healthcheck:
       test: "mongo --eval 'db.stats().ok'"
       interval: 10s
@@ -161,13 +218,13 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PWD}
       - MYSQL_DATABASE=review-db
-      - MYSQL_USER=vmware
-      - MYSQL_PASSWORD=password
+      - MYSQL_USER=${MYSQL_USR}
+      - MYSQL_PASSWORD=${MYSQL_PWD}
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-uvmware", "-ppassword", "-h", "localhost"]
-      interval: 10s
+      test: "/usr/bin/mysql --user=${MYSQL_USR} --password=${MYSQL_PWD} --execute \"SHOW DATABASES;\""
+      interval: 20s
       timeout: 5s
       retries: 10
 
@@ -203,6 +260,8 @@ services:
     environment:
       - STORAGE_TYPE=mem
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - RABBIT_USER=${RABBITMQ_USR}
+      - RABBIT_PASSWORD=${RABBITMQ_PWD}
     ports:
       - 9411:9411
     depends_on:
