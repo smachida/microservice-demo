@@ -9,7 +9,7 @@ fi
 eval $(minikube docker-env)
 
 docker tag microservice-demo/auth-server microservice-demo/auth-server:$1
-docker tag microservice-demo/config-server microservice-demo/config-server:$1
+#docker tag microservice-demo/config-server microservice-demo/config-server:$1
 docker tag microservice-demo/gateway microservice-demo/gateway:$1
 docker tag microservice-demo/product-composite-service microservice-demo/product-composite-service:$1
 docker tag microservice-demo/product-service microservice-demo/product-service:$1

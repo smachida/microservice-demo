@@ -1,9 +1,8 @@
 resources:
   - auth-server.yaml
-  - config-server.yaml
-  - gateway.yaml
   - product-composite.yaml
   - product.yaml
   - recommendation.yaml
   - review.yaml
   - zipkin-server.yaml
+  - ingress-edge-server.yaml

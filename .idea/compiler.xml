@@ -16,6 +16,8 @@
       <module name="eureka-server.test" target="1.8" />
       <module name="eurekaserver.main" target="1.8" />
       <module name="eurekaserver.test" target="1.8" />
+      <module name="microservice-demo.spring-cloud.config-server.main" target="1.8" />
+      <module name="microservice-demo.spring-cloud.config-server.test" target="1.8" />
       <module name="microservice-demo.spring-cloud.eureka-server.main" target="1.8" />
       <module name="microservice-demo.spring-cloud.eureka-server.test" target="1.8" />
     </bytecodeTargetLevel>
