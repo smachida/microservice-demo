@@ -218,8 +218,8 @@ function testCircuitBreaker() {
     assertEqual "Product Id: $PROD_ID_NOT_FOUND not found in fallback cache!" "$(echo $RESPONSE | jq -r .message)"
 
     # Wait for the circuit breaker to transition to the half open state (i.e. max 10 sec)
-    echo "Will sleep for 60 sec waiting for the CB to go Half Open..."
-    sleep 60
+    echo "Will sleep for 120 sec waiting for the CB to go Half Open..."
+    sleep 120
 
     # Verify that the circuit breaker is in half open state
     assertEqual "HALF_OPEN" "$($EXEC wget product-composite/actuator/health -qO - | jq -r .components.circuitBreakers.details.product.details.state)"
@@ -231,6 +231,9 @@ function testCircuitBreaker() {
         assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $AUTH -s"
         assertEqual "product name C" "$(echo "$RESPONSE" | jq -r .name)"
     done
+
+    echo "Will sleep for 120 sec waiting for the CB to go Closed..."
+    sleep 120
 
     # Verify that the circuit breaker is in closed state again
     assertEqual "CLOSED" "$($EXEC wget product-composite:8080/actuator/health -qO - | jq -r .components.circuitBreakers.details.product.details.state)"

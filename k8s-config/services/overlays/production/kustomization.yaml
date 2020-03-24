@@ -1,0 +1,11 @@
+bases:
+  - ../../base
+patchesStrategicMerge:
+  - auth-server-prod.yaml
+  - config-server-prod.yaml
+  - gateway-prod.yaml
+  - product-composite-prod.yaml
+  - product-prod.yaml
+  - recommendation-prod.yaml
+  - review-prod.yaml
+  - zipkin-server-prod.yaml

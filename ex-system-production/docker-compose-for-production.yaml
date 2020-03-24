@@ -1,0 +1,70 @@
+version: '2.1'
+
+services:
+  # $ mongo
+  mongodb-product:
+    image: mongo:3.6.9
+    mem_limit: 300m
+    networks:
+      - my-network
+    ports:
+      - "27017:27017"
+    command: mongod --smallfiles
+    healthcheck:
+      test: "mongo --eval 'db.stats().ok'"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # $ mongo
+  mongodb-recommendation:
+    image: mongo:3.6.9
+    mem_limit: 300m
+    networks:
+      - my-network
+    ports:
+      - "27018:27017"
+    command: mongod --smallfiles
+    healthcheck:
+      test: "mongo --eval 'db.stats().ok'"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # $ mysql -uroot -h127.0.0.1 -p
+  mysql:
+    image: mysql:5.7
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+    mem_limit: 300m
+    networks:
+      - my-network
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=review-db
+      - MYSQL_USER=vmware
+      - MYSQL_PASSWORD=password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-uvmware", "-ppassword", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3.7.8-management
+    mem_limit: 300m
+    networks:
+      - my-network
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+networks:
+  my-network:
+    name: my-network
