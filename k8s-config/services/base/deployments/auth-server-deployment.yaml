@@ -1,38 +1,40 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: zipkin-server
+  name: auth-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: zipkin-server
+      app: auth-server
   template:
     metadata:
       labels:
-        app: zipkin-server
+        app: auth-server
+        version: latest
     spec:
       containers:
-        - name: zipkin-server
-          image: openzipkin/zipkin:2.12.9
+        - name: auth-server
+          image: microservice-demo/auth-server
+          imagePullPolicy: Never
           env:
-            - name: STORAGE_TYPE
-              value: mem
-            - name: RABBIT_ADDRESSES
-              value: rabbitmq
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: SPRING_CONFIG_LOCATION
+              value: file:/config-repo/application.yaml,file:/config-repo/auth-server.yaml
           envFrom:
             - secretRef:
-                name: rabbitmq-zipkin-credentials
+                name: rabbitmq-credentials
           ports:
-            - containerPort: 9411
+            - containerPort: 80
           resources:
             limits:
-              memory: 512Mi
+              memory: 300Mi
           livenessProbe:
             httpGet:
               scheme: HTTP
               path: /actuator/info
-              port: 9411
+              port: 4004
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 2
@@ -42,20 +44,16 @@ spec:
             httpGet:
               scheme: HTTP
               path: /actuator/health
-              port: 9411
+              port: 4004
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 2
             failureThreshold: 3
             successThreshold: 1
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: zipkin-server
-spec:
-  selector:
-    app: zipkin-server
-  ports:
-    - port: 9411
-
+          volumeMounts:
+            - name: config-repo-volume
+              mountPath: /config-repo
+      volumes:
+        - name: config-repo-volume
+          configMap:
+            name: config-repo-auth-server

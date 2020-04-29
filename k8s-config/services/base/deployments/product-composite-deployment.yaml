@@ -1,31 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: recommendation
+  name: product-composite
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: recommendation
+      app: product-composite
   template:
     metadata:
       labels:
-        app: recommendation
+        app: product-composite
+        version: latest
     spec:
       containers:
-        - name: recommendation
-          image: microservice-demo/recommendation-service
+        - name: product-composite
+          image: microservice-demo/product-composite-service
           imagePullPolicy: Never
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "docker"
             - name: SPRING_CONFIG_LOCATION
-              value: file:/config-repo/application.yaml,file:/config-repo/recommendation.yaml
+              value: file:/config-repo/application.yaml,file:/config-repo/product-composite.yaml
           envFrom:
             - secretRef:
                 name: rabbitmq-credentials
-            - secretRef:
-                name: mongodb-credentials
           ports:
             - containerPort: 80
           resources:
@@ -35,7 +34,7 @@ spec:
             httpGet:
               scheme: HTTP
               path: /actuator/info
-              port: 80
+              port: 4004
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 2
@@ -45,7 +44,7 @@ spec:
             httpGet:
               scheme: HTTP
               path: /actuator/health
-              port: 80
+              port: 4004
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 2
@@ -57,15 +56,5 @@ spec:
       volumes:
         - name: config-repo-volume
           configMap:
-            name: config-repo-recommendation
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: recommendation
-spec:
-  selector:
-    app: recommendation
-  ports:
-    - port: 80
-      targetPort: 80
+            name: config-repo-product-composite
+

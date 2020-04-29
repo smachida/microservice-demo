@@ -252,21 +252,6 @@ services:
     environment:
       - KAFKA_ADVERTISED_HOST_NAME=zookeeper
 
-  zipkin:
-    image: openzipkin/zipkin:2.12.9
-    mem_limit: 512m
-    networks:
-      - my-network
-    environment:
-      - STORAGE_TYPE=mem
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - RABBIT_USER=${RABBITMQ_USR}
-      - RABBIT_PASSWORD=${RABBITMQ_PWD}
-    ports:
-      - 9411:9411
-    depends_on:
-      - kafka
-
 networks:
   my-network:
     name: my-network

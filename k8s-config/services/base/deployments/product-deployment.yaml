@@ -1,29 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-server
+  name: product
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth-server
+      app: product
   template:
     metadata:
       labels:
-        app: auth-server
+        app: product
+        version: latest
     spec:
       containers:
-        - name: auth-server
-          image: microservice-demo/auth-server
+        - name: product
+          image: microservice-demo/product-service
           imagePullPolicy: Never
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "docker"
             - name: SPRING_CONFIG_LOCATION
-              value: file:/config-repo/application.yaml,file:/config-repo/auth-server.yaml
+              value: file:/config-repo/application.yaml,file:/config-repo/product.yaml
           envFrom:
             - secretRef:
                 name: rabbitmq-credentials
+            - secretRef:
+                name: mongodb-credentials
           ports:
             - containerPort: 80
           resources:
@@ -33,7 +36,7 @@ spec:
             httpGet:
               scheme: HTTP
               path: /actuator/info
-              port: 80
+              port: 4004
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 2
@@ -43,7 +46,7 @@ spec:
             httpGet:
               scheme: HTTP
               path: /actuator/health
-              port: 80
+              port: 4004
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 2
@@ -55,15 +58,4 @@ spec:
       volumes:
         - name: config-repo-volume
           configMap:
-            name: config-repo-auth-server
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: auth-server
-spec:
-  selector:
-    app: auth-server
-  ports:
-    - port: 80
-      targetPort: 80
+            name: config-repo-product

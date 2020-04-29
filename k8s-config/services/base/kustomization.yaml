@@ -1,8 +1,0 @@
-resources:
-  - auth-server.yaml
-  - product-composite.yaml
-  - product.yaml
-  - recommendation.yaml
-  - review.yaml
-  - zipkin-server.yaml
-  - ingress-edge-server.yaml

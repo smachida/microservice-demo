@@ -1,29 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: product-composite
+  name: recommendation
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: product-composite
+      app: recommendation
   template:
     metadata:
       labels:
-        app: product-composite
+        app: recommendation
+        version: latest
     spec:
       containers:
-        - name: product-composite
-          image: microservice-demo/product-composite-service
+        - name: recommendation
+          image: microservice-demo/recommendation-service
           imagePullPolicy: Never
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "docker"
             - name: SPRING_CONFIG_LOCATION
-              value: file:/config-repo/application.yaml,file:/config-repo/product-composite.yaml
+              value: file:/config-repo/application.yaml,file:/config-repo/recommendation.yaml
           envFrom:
             - secretRef:
                 name: rabbitmq-credentials
+            - secretRef:
+                name: mongodb-credentials
           ports:
             - containerPort: 80
           resources:
@@ -33,7 +36,7 @@ spec:
             httpGet:
               scheme: HTTP
               path: /actuator/info
-              port: 80
+              port: 4004
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 2
@@ -43,7 +46,7 @@ spec:
             httpGet:
               scheme: HTTP
               path: /actuator/health
-              port: 80
+              port: 4004
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 2
@@ -55,15 +58,4 @@ spec:
       volumes:
         - name: config-repo-volume
           configMap:
-            name: config-repo-product-composite
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: product-composite
-spec:
-  selector:
-    app: product-composite
-  ports:
-    - port: 80
-      targetPort: 80
+            name: config-repo-recommendation

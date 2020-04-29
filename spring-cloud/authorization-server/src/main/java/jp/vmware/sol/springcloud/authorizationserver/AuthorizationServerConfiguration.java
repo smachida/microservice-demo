@@ -217,6 +217,7 @@ class SubjectAttributeUserTokenConverter extends DefaultUserAuthenticationConver
         @Override
         public Map<String, ?> convertUserAuthentication(Authentication authentication) {
             Map<String, Object> response = new LinkedHashMap<String, Object>();
+            response.put("iss", "http://auth-server.local");
             response.put("sub", authentication.getName());
 
             if (authentication.getAuthorities() != null &&

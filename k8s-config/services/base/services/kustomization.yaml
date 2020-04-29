@@ -1,0 +1,6 @@
+resources:
+  - auth-server-service.yaml
+  - product-composite-service.yaml
+  - product-service.yaml
+  - recommendation-service.yaml
+  - review-service.yaml
