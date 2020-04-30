@@ -53,6 +53,8 @@ public class ReviewServiceImpl implements ReviewService {
         if (productId < 1)
             throw new InvalidInputException("Invalid productId: " + productId);
 
+        LOG.info("Will get reviews for product with id={}", productId);
+
         return asyncFlux(getByProductId(productId)).log();
     }
 

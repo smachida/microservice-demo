@@ -59,7 +59,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.7.8-management
-    mem_limit: 2048m 
+    mem_limit: 1024m 
     networks:
       - my-network
     ports:

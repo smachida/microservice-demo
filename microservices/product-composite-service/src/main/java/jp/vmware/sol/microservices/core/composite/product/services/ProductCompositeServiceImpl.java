@@ -93,6 +93,8 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
     public Mono<ProductAggregate> getCompositeProduct(HttpHeaders requestHeaders, int productId, int delay, int faultPercent) {
         // Product, Recommendation, 及び Review サービス呼び出しの並行実行
 
+        LOG.info("Will get composite product info for product.id={}", productId);
+
         HttpHeaders headers = getHeaders(requestHeaders, "X-group");
 
         return Mono.zip(

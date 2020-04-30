@@ -68,6 +68,8 @@ public class ProductServiceImpl implements ProductService {
             throwErrorIfBadLuck(faultPercent);
         }
 
+        LOG.info("Will get product info for id={}", productId);
+
         // Project Reactor: fluent API
         return repository.findByProductId(productId)
                 .switchIfEmpty(error (new NotFoundException("No product found for Product Id: " + productId)))

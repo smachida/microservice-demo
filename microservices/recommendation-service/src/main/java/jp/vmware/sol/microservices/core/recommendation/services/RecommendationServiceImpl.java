@@ -57,6 +57,8 @@ public class RecommendationServiceImpl implements RecommendationService {
         if (productId < 1)
             throw new InvalidInputException("Invalid productId: " + productId);
 
+        LOG.info("Will get recommendations for product with id={}", productId);
+
         // Project Reactor: fluent API
         return repository.findByProductId(productId)
                 .log()

@@ -23,6 +23,7 @@
 * 14-2-k8s-Using-k8s-Features-In-Production-Env
 * 15-1-k8s-Using-ServiceMesh-Security-and-Resiliency
 * 15-2-k8s-Using-ServiceMesh-Canary-and-BlueGreen
+* 16-k8s-Using-EFK-Centralized-Logging
 
 ## SpringCloud-Security-OAuth2-1
 
