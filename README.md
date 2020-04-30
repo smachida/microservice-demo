@@ -22,6 +22,7 @@
 * 14-1-k8s-Using-k8s-Features-In-Development-Env
 * 14-2-k8s-Using-k8s-Features-In-Production-Env
 * 15-1-k8s-Using-ServiceMesh-Security-and-Resiliency
+* 15-2-k8s-Using-ServiceMesh-Canary-and-BlueGreen
 
 ## SpringCloud-Security-OAuth2-1
 

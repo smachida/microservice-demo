@@ -10,10 +10,11 @@ spec:
     metadata:
       labels:
         app: auth-server
+        version: v3
     spec:
       containers:
         - name: auth-server
-          image: microservice-demo/auth-server:v1
+          image: microservice-demo/auth-server:v3
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "docker,prod"

@@ -16,7 +16,7 @@ fi
 
 if [ $1 = "delete" ]; then
 
-  echo "Creating microservice-demo namespace..."
+  echo "Deleting microservice-demo namespace..."
  
   kubectl delete namespace microservice-demo
 fi

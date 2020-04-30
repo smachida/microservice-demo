@@ -1,5 +1,6 @@
 package jp.vmware.sol.api.core.review;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
@@ -19,6 +20,7 @@ public interface ReviewService {
             produces = "application/json"
     )
     Flux<Review> getReviews(
+            @RequestHeader HttpHeaders headers,
             @RequestParam(value = "productId", required = true) int productId);
 
     @DeleteMapping(value = "/review")

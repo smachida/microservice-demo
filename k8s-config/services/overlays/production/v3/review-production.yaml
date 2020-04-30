@@ -10,10 +10,11 @@ spec:
     metadata:
       labels:
         app: review
+        version: v3
     spec:
       containers:
         - name: review
-          image: microservice-demo/review-service:v1
+          image: microservice-demo/review-service:v3
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "docker,prod"

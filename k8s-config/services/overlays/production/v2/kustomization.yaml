@@ -1,0 +1,9 @@
+nameSuffix: -v2
+bases:
+  - ../../../base/deployments
+patchesStrategicMerge:
+  - auth-server-production.yaml
+  - product-composite-production.yaml
+  - product-production.yaml
+  - recommendation-production.yaml
+  - review-production.yaml

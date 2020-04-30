@@ -1,0 +1,10 @@
+bases:
+  - ../../../base/istio
+patchesStrategicMerge:
+  - auth-server-routing-virtual-service.yaml
+  - product-composite-routing-virtual-service.yaml
+  - old_new_subsets_destination_rules.yaml
+resources:
+  - product-routing-virtual-service.yaml
+  - recommendation-routing-virtual-service.yaml
+  - review-routing-virtual-service.yaml

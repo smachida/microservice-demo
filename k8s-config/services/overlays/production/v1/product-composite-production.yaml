@@ -1,19 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: recommendation
+  name: product-composite
 spec:
   selector:
     matchLabels:
-      app: recommendation
+      app: product-composite
   template:
     metadata:
       labels:
-        app: recommendation
+        app: product-composite
+        version: v1
     spec:
       containers:
-        - name: recommendation
-          image: microservice-demo/recommendation-service:v1
+        - name: product-composite
+          image: microservice-demo/product-composite-service:v1
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "docker,prod"
