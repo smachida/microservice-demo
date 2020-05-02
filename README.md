@@ -27,6 +27,7 @@
 * 15-1-k8s-Using-ServiceMesh-Security-and-Resiliency
 * 15-2-k8s-Using-ServiceMesh-Canary-and-BlueGreen
 * 16-k8s-Using-EFK-Centralized-Logging
+* 17-k8s-Using-Prometheus-and-Grafana-Monitoring
 
 ## SpringCloud-Security-OAuth2-1
 

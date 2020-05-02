@@ -63,6 +63,7 @@ if [ $1 = "start" ]; then
 
   echo "Waiting for the services to start up..."
   kubectl wait --timeout=120s --for=condition=ready pod --all
+
 fi
 
 if [ $1 = "stop" ]; then

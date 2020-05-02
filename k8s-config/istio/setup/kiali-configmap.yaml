@@ -21,5 +21,7 @@ data:
         in_cluster_url: http://jaeger-query.istio-system.svc.cluster.local:16686/jaeger
       grafana:
         url: http://grafana.istio-system.svc.cluster.local:3000
+        in_cluster_url: http://grafana:3000
       prometheus:
-        url: http://prometheus:9090
+        url: http://prometheus.istio-system.svc.cluster.local:9090
+        in_cluster_url: http://prometheus.istio-system.svc.cluster.local:9090
