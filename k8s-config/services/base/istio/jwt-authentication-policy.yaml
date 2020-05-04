@@ -12,4 +12,10 @@ spec:
   - jwt:
       issuer: "http://auth-server.local"
       jwksUri: "http://auth-server.microservice-demo.svc.cluster.local/.well-known/jwks.json"
+      triggerRules:
+      - excludedPaths:
+        - exact: /actuator/prometheus
+        - exact: /actuator/health
+        - exact: /actuator/info
+        - exact: /actuator/circuitbreakerevents
   principalBinding: USE_ORIGIN
