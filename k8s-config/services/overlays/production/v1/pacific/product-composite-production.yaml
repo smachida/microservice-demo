@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-composite
+spec:
+  selector:
+    matchLabels:
+      app: product-composite
+  template:
+    metadata:
+      labels:
+        app: product-composite
+        version: v1
+    spec:
+      containers:
+        - name: product-composite
+          image: 172.17.137.2/ns-mapdemo-1/microservice-demo/product-composite-service:v1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker,prod"
+          resources:
+            requests:
+              memory: "200Mi"
+            limits:
+              memory: "400Mi"

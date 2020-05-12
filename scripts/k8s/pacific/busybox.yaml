@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: ns-mapdemo-1
+spec:
+  containers:
+  - name: busybox
+    image: 172.17.137.2/ns-mapdemo-1/busybox:latest
+    command:
+    - sleep
+    - "10"
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always
