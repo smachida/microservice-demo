@@ -24,3 +24,6 @@ spec:
               memory: "200Mi"
             limits:
               memory: "400Mi"
+      imagePullSecrets:
+#        - name: microservice-demo-image-pull-secret
+        - name: microservice-demo-registry-secret
