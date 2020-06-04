@@ -1,0 +1,5 @@
+resources:
+  - mongodb_product.yaml
+  - mongodb_recommendation.yaml
+  - mysql.yaml
+  - rabbitmq.yaml

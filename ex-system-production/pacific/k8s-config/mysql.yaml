@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: 172.17.137.2/ns-mapdemo-1/mysql:5.7
+          args:
+            - "--ignore-db-dir=lost+found"
+            - "--character-set-server=utf8mb4"
+            - "--collation-server=utf8mb4_bin"
+          envFrom:
+            - secretRef:
+                name: mysql-server-credentials
+          ports:
+            - containerPort: 3306
+          resources:
+            limits:
+              memory: 300Mi
+      imagePullSecrets:
+        - name: ns-mapdemo-1-registry-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  selector:
+    app: mysql
+  type: LoadBalancer
+  ports:
+    - port: 3306
