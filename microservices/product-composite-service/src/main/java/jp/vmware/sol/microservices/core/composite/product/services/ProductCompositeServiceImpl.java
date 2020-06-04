@@ -2,6 +2,8 @@ package jp.vmware.sol.microservices.core.composite.product.services;
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.reactor.retry.RetryExceptionWrapper;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import jp.vmware.sol.api.composite.product.*;
 import jp.vmware.sol.api.core.product.Product;
 import jp.vmware.sol.api.core.recommendation.Recommendation;
@@ -32,10 +34,19 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
     private ServiceUtil serviceUtil;
     private ProductCompositeIntegration integration;
 
+    private MeterRegistry meterRegistry;
+    private Counter demoCounter;
+
     @Autowired
-    public ProductCompositeServiceImpl(ServiceUtil serviceUtil, ProductCompositeIntegration integration) {
+    public ProductCompositeServiceImpl(
+            ServiceUtil serviceUtil,
+            ProductCompositeIntegration integration,
+            MeterRegistry meterRegistry) {
         this.serviceUtil = serviceUtil;
         this.integration = integration;
+        this.meterRegistry = meterRegistry;
+
+        this.demoCounter = this.meterRegistry.counter("demo_get_counter", "type", "product-composite");
     }
 
     @Override
@@ -94,6 +105,9 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
         // Product, Recommendation, 及び Review サービス呼び出しの並行実行
 
         LOG.info("Will get composite product info for product.id={}", productId);
+
+        demoCounter.increment(1.0);
+        long start = System.currentTimeMillis();
 
         HttpHeaders headers = getHeaders(requestHeaders, "X-group");
 
