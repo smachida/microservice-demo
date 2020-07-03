@@ -11,6 +11,10 @@ spring:
       maxAttempts: 20
     uri: http://${CONFIG_SERVER_USR}:${CONFIG_SERVER_PWD}@${app.config-server}:8888
 
+wavefront.application.name: microservice-workshop
+wavefront.application.service: ${spring.application.name}
+management.metrics.export.wavefront.api-token: ${WAVEFRONT_TOKEN}
+management.metrics.export.wavefront.uri: https://wavefront.surF
 ---
 spring.profiles: docker
 
