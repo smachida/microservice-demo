@@ -30,6 +30,28 @@
 * 17-k8s-Using-Prometheus-and-Grafana-Monitoring
 * 17-k8s-Using-Prometheus-and-Grafana-Monitoring-U1
 
-## SpringCloud-Security-OAuth2-1
+### Branches
+#### Development
+*  br-01-ms-basic
+*  br-02-ms-docker-compose
+*  br-03-ms-swagger-api-support
+*  br-04-ms-persistence
+*  br-05-ms-reactive-and-asyn-api
+#### Dev & Platform
+*  br-06-sc-netflix-eureka
+*  br-07-sc-gateway
+*  br-08-sc-security-oauth2
+*  br-09-sc-config
+*  br-10-sc-circuitbreaker
+*  br-11-sc-sleuth-and-zipkin
+#### Platform & Dev
+*  br-12-k8s-minikube-test
+*  br-13-1-k8s-in-development-env
+*  br-13-2-k8s-in-production-env
+*  br-14-1-k8s-using-k8s-features-in-development-env
+*  br-14-2-k8s-using-k8s-features-in-production-env
+*  br-15-1-k8s-using-servicemesh-security-and-resiliency
+*  br-15-2-k8s-using-servicemesh-canary-and-bluegreen
+*  br-16-k8s-using-efk-centralized-logging
+*  br-17-k8s-using-prometheus-and-grafana-monitoring
 
-## k8s-Using-k8s-Features-1
