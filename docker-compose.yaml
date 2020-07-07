@@ -10,6 +10,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - WAVEFRONT_TOKEN=${WAVEFRONT_TOKEN}
     depends_on:
       mongodb_product:
         condition: service_healthy
@@ -25,6 +26,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - WAVEFRONT_TOKEN=${WAVEFRONT_TOKEN}
     depends_on:
       mongodb_recommendation:
         condition: service_healthy
@@ -40,6 +42,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - WAVEFRONT_TOKEN=${WAVEFRONT_TOKEN}
     depends_on:
       mysql:
         condition: service_healthy
@@ -55,6 +58,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - WAVEFRONT_TOKEN=${WAVEFRONT_TOKEN}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -64,6 +68,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - WAVEFRONT_TOKEN=${WAVEFRONT_TOKEN}
     build: spring-cloud/eureka-server
     mem_limit: 350m
     networks:
@@ -74,6 +79,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - WAVEFRONT_TOKEN=${WAVEFRONT_TOKEN}
     build: spring-cloud/gateway
     mem_limit: 350m
     ports:
@@ -86,6 +92,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+      - WAVEFRONT_TOKEN=${WAVEFRONT_TOKEN}
     build: spring-cloud/authorization-server
     mem_limit: 350m
     networks:
@@ -97,6 +104,7 @@ services:
       - ENCRYPT_KEY=${CONFIG_SERVER_ENCRYPT_KEY}
       - SPRING_SECURITY_USER_NAME=${CONFIG_SERVER_USR}
       - SPRING_SECURITY_USER_PASSWORD=${CONFIG_SERVER_PWD}
+      - WAVEFRONT_TOKEN=${WAVEFRONT_TOKEN}
     volumes:
       - $PWD/config-repo:/config-repo
     build: spring-cloud/config-server
@@ -174,20 +182,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-
-  zipkin:
-    image: openzipkin/zipkin:2.12.9
-    mem_limit: 512m
-    networks:
-      - my-network
-    environment:
-      - STORAGE_TYPE=mem
-      - RABBIT_ADDRESSES=rabbitmq
-    ports:
-      - 9411:9411
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
 
 networks:
   my-network:

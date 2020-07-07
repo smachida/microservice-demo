@@ -15,6 +15,15 @@
 * 09-SpringCloud-Config
 * 10-SpringCloud-CircuitBreaker
 * 10-SpringCloud-CircuitBreaker-U1
-* 11_springCloud-Sleuth-And-Zipkin
+* 11-SpringCloud-Sleuth-And-Zipkin
+* 11-SpringCloud-Sleuth-And-Wavefront
 
 ## SpringCloud-Security-OAuth2-1
+
+## SpringCloud-Sleuth-And-Wavefront
+
+For wavefront demo please update TOKEN on .env
+
+```
+WAVEFRONT_TOKEN=YOUR_TOKEN << UPDATE to your token
+```
