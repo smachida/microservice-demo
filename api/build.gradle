@@ -10,7 +10,7 @@ sourceCompatibility = '1.8'
 
 repositories {
 	mavenCentral()
-	maven {url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'}
+	maven {url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/'}
 }
 
 bootJar {
@@ -28,7 +28,8 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	testImplementation 'io.projectreactor:reactor-test'
-	implementation 'io.springfox:springfox-swagger2:3.0.0-SNAPSHOT'
+	//implementation 'io.springfox:springfox-swagger2:3.0.0-SNAPSHOT'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0-SNAPSHOT'
 }
 
 test {

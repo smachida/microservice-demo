@@ -20,7 +20,7 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven {url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'}
+    maven {url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/'}
 }
 
 dependencies {
@@ -34,9 +34,10 @@ dependencies {
     }
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'junit:junit:4.12'
-    implementation 'io.springfox:springfox-swagger2:3.0.0-SNAPSHOT'
-    implementation 'io.springfox:springfox-swagger-ui:3.0.0-SNAPSHOT'
-    implementation 'io.springfox:springfox-spring-webflux:3.0.0-SNAPSHOT'
+    //implementation 'io.springfox:springfox-swagger2:3.0.0-SNAPSHOT'
+    //implementation 'io.springfox:springfox-swagger-ui:3.0.0-SNAPSHOT'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0-SNAPSHOT'
+    //implementation 'io.springfox:springfox-spring-webflux:3.0.0-SNAPSHOT'
     implementation project(':api')
     implementation project(':util')
 }
